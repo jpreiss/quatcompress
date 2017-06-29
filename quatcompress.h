@@ -45,14 +45,13 @@ static inline uint32_t quatcompress(float const q[4])
 
 	// 1/sqrt(2) is the largest possible value 
 	// of the second-largest element in a unit quaternion.
-	float const SMALL_MAX = 1.0 / sqrt(2);
 
 	// do compression using sign bit and 9-bit precision per element.
 	uint32_t comp = i_largest;
 	for (unsigned i = 0; i < 4; ++i) {
 		if (i != i_largest) {
 			unsigned negbit = (q[i] < 0) ^ negate;
-			unsigned mag = ((1 << 9) - 1) * (fabs(q[i]) / SMALL_MAX) + 0.5f;
+			unsigned mag = ((1 << 9) - 1) * (fabs(q[i]) / M_SQRT1_2) + 0.5f;
 			comp = (comp << 10) | (negbit << 9) | mag;
 		}
 	}
@@ -62,7 +61,6 @@ static inline uint32_t quatcompress(float const q[4])
 
 static inline void quatdecompress(uint32_t comp, float q[4])
 {
-	float const SMALL_MAX = 1.0 / sqrt(2);
 	unsigned const mask = (1 << 9) - 1;
 
 	int const i_largest = comp >> 30;
@@ -72,7 +70,7 @@ static inline void quatdecompress(uint32_t comp, float q[4])
 			unsigned mag = comp & mask;
 			unsigned negbit = (comp >> 9) & 0x1;
 			comp = comp >> 10;
-			q[i] = SMALL_MAX * ((float)mag) / mask;
+			q[i] = M_SQRT1_2 * ((float)mag) / mask;
 			if (negbit == 1) {
 				q[i] = -q[i];
 			}
