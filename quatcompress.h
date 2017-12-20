@@ -1,5 +1,5 @@
-#include <stdint.h>
-#include <math.h>
+#ifndef QUATCOMPRESS_H
+#define QUATCOMPRESS_H
 
 /*
 
@@ -26,6 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
+
+#include <stdint.h>
+#include <math.h>
 
 // assumes input quaternion is normalized. will fail if not.
 static inline uint32_t quatcompress(float const q[4])
@@ -81,3 +84,5 @@ static inline void quatdecompress(uint32_t comp, float q[4])
 	}
 	q[i_largest] = sqrtf(1.0f - sum_squares);
 }
+
+#endif // QUATCOMPRESS_H
